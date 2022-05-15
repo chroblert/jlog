@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/chroblert/jfile"
+	"github.com/chroblert/jgoutils/jfile"
 	"github.com/chroblert/jlog"
 	"os"
 	"path/filepath"

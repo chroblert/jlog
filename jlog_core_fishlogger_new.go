@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"sync"
 	//"github.com/fatih/color"
-	"github.com/chroblert/jgoutils/jthirdutil/color"
+	"github.com/chroblert/jlog/jthirdutil/color"
 	"os"
 	"path/filepath"
 	"runtime"

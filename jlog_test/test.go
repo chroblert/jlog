@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/chroblert/jlog"
-	"github.com/chroblert/jlog_test/test1"
-	"github.com/chroblert/jlog_test/test2"
+	"github.com/chroblert/jlog/jlog_test/test1"
+	"github.com/chroblert/jlog/jlog_test/test2"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
