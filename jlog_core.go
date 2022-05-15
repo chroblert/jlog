@@ -74,13 +74,19 @@ func newLogger(logConf LogConfig) *FishLogger {
 		return fl
 	}
 	//日志文件路径设置
+	// 若未传入明文路径，则使用logs\app.log作为默认路径
+	if len(strings.TrimSpace(fl.logFullPath)) == 0 {
+		fl.logFullPath = "logs\\app.log"
+	}
 	fl.logFileExt = filepath.Ext(fl.logFullPath)                       // .log
 	fl.logFileName = strings.TrimSuffix(fl.logFullPath, fl.logFileExt) // logs/app
 	if fl.logFileExt == "" {
 		fl.logFileExt = ".log"
 	}
 	os.MkdirAll(filepath.Dir(fl.logFullPath), 0666)
-
+	if fl.flushInterval < 1 {
+		fl.flushInterval = 10 * time.Second
+	}
 	signalChannel := make(chan os.Signal, 1)
 	go fl.daemon(signalChannel)
 	signal.Notify(signalChannel, syscall.SIGINT, syscall.SIGTERM)
@@ -99,7 +105,7 @@ func New(logConfs ...LogConfig) *FishLogger {
 		BufferSize:        2048,
 		FlushInterval:     10 * time.Second,
 		MaxStoreDays:      -1,
-		MaxSizePerLogFile: 512000000,
+		MaxSizePerLogFile: 524288000, // 500MB
 		LogCount:          -1,
 		LogFullPath:       "logs/app.log",
 		Lv:                DEBUG,

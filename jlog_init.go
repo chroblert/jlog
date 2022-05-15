@@ -74,7 +74,7 @@ type LogConfig struct {
 	BufferSize        int
 	FlushInterval     time.Duration
 	MaxStoreDays      int
-	MaxSizePerLogFile int64
+	MaxSizePerLogFile int64 // 单位B，默认500M
 	LogCount          int
 	LogFullPath       string
 	Lv                logLevel

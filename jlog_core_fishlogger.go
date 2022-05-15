@@ -20,7 +20,7 @@ type FishLogger struct {
 	console           bool          // 标准输出  默认 false
 	verbose           bool          // 是否输出行号和文件名 默认 false
 	maxStoreDays      int           // 最大保留天数
-	maxSizePerLogFile int64         // 单个日志最大容量 默认 256MB
+	maxSizePerLogFile int64         // 单个日志最大容量(纯日志内容，不计算提示信息) 默认 500MB
 	size              int64         // 累计大小 无后缀
 	fullLogFilePath   string        // 文件目录 完整路径 logFullPath=logFileName+logFileExt
 	logFileName       string        // 文件名

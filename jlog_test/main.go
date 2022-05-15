@@ -1,11 +1,7 @@
 package main
 
 import (
-	"github.com/chroblert/jgoutils/jfile"
 	"github.com/chroblert/jlog"
-	"os"
-	"path/filepath"
-	"sync"
 )
 
 var (
@@ -13,33 +9,31 @@ var (
 )
 
 func main() {
-	nlog = jlog.New()
-	//nlog.SetLogFullPath("logs\\nlog.log")
-	nlog.SetStoreToFile(false)
-	defer func() {
-		nlog.Flush()
-	}()
-	//jfile.ProcessLine("E:\\test-2000-2100.log", func(s string) error {
-	//	nlog.NInfo(s)
-	//	return nil
-	//},false)
-	ex, err := os.Executable()
-	if err != nil {
-		panic(err)
+	nlog = jlog.New(jlog.LogConfig{
+		BufferSize:        0,
+		FlushInterval:     0,
+		MaxStoreDays:      0,
+		MaxSizePerLogFile: 1024,
+		LogCount:          0,
+		LogFullPath:       "",
+		Lv:                0,
+		UseConsole:        true,
+		Verbose:           false,
+		InitCreateNewLog:  false,
+		StoreToFile:       true,
+	})
+	jlog.SetStoreToFile(true)
+	jlog.SetMaxStoreDays(4)
+	jlog.IsIniCreateNewLog(false)
+	jlog.SetLogFullPath("logs\\test.log")
+	jlog.SetLevel(jlog.DEBUG)
+	jlog.SetMaxSizePerLogFile(1024)
+	jlog.SetVerbose(false)
+	jlog.Info("info")
+	nlog.Error("error")
+	nlog.Info("info")
+	for i := 0; i < 10; i++ {
+		nlog.NErrorf("a")
 	}
-	exPath := filepath.Dir(ex)
-	nlog.Info(exPath)
-	nlog.Info(jfile.GetWorkPath())
-	//p,_ := jfile.GetWorkPath()
-	nlog.Info(jfile.GetAbsPath("fdfasd\\fsadfa\\../ddd/log"))
-	nlog.Info(jfile.PathExists("ct95C4.tmp"))
-	wg := sync.WaitGroup{}
-	for i := 0; i < 1000; i++ {
-		wg.Add(1)
-		go func(t int) {
-			defer wg.Done()
-			nlog.Warn(t)
-		}(i)
-	}
-	wg.Wait()
+
 }
