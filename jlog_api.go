@@ -4,10 +4,6 @@ import (
 	"os"
 )
 
-func init() {
-	//log.Println("jlog api")
-}
-
 // 设置
 
 func SetVerbose(b bool) {

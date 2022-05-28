@@ -10,10 +10,6 @@ import (
 	"time"
 )
 
-func init() {
-	//log.Println("jlog core")
-}
-
 // 字符串等级
 func (lv logLevel) Str() string {
 	if lv >= DEBUG && lv <= FATAL {
@@ -21,31 +17,6 @@ func (lv logLevel) Str() string {
 	}
 	return "[N]"
 }
-
-// newLogger 实例化logger
-// path 日志完整路径 eg:logs/app.log
-//func NewLogger_old(fullPath string) *FishLogger {
-//	fl := new(FishLogger)
-//	fl.LogFullPath = fullPath                                    // logs/app.log
-//	fl.logFileExt = filepath.Ext(fullPath)                       // .log
-//	fl.logFileName = strings.TrimSuffix(fullPath, fl.logFileExt) // logs/app
-//	if fl.logFileExt == "" {
-//		fl.logFileExt = ".log"
-//	}
-//	os.MkdirAll(filepath.Dir(fullPath), 0666)
-//	fl.level = DEBUG
-//	fl.MaxStoreDays = maxAge
-//	fl.MaxSizePerLogFile = maxSize
-//	fl.pool = sync.Pool{
-//		New: func() interface{} {
-//			return new(buffer)
-//		},
-//	}
-//	siganlChannel := make(chan os.Signal, 1)
-//	go fl.daemon(siganlChannel)
-//	signal.Notify(siganlChannel, syscall.SIGINT, syscall.SIGTERM)
-//	return fl
-//}
 
 // newLogger 实例化logger
 // path 日志完整路径 eg:logs/app.log
@@ -99,6 +70,9 @@ func newLogger(logConf LogConfig) *FishLogger {
 func New(logConfs ...LogConfig) *FishLogger {
 	if len(logConfs) == 1 {
 		logConf := logConfs[0]
+		if logConf.MaxSizePerLogFile < 1 {
+			logConf.MaxSizePerLogFile = 524288000
+		}
 		return newLogger(logConf)
 	}
 	return newLogger(LogConfig{
