@@ -3,8 +3,6 @@ package main
 import (
 	"fmt"
 	"github.com/chroblert/jlog"
-	"github.com/chroblert/jlog/jlog_test/test1"
-	"github.com/chroblert/jlog/jlog_test/test2"
 	"log"
 	"net/http"
 	_ "net/http/pprof"
@@ -24,8 +22,6 @@ func mainA() {
 	jlog.SetLevel(jlog.DEBUG)
 	//jlog.SetVerbose(false)
 	jlog.Warn("warn: main")
-	test1.Test1()
-	test2.Test2()
 	jlog.Println("xxx")
 	jlog.Printf("%s\n", "testlll")
 	fmt.Fprintln(os.Stderr, "xxxxxxx")
@@ -43,7 +39,7 @@ func mainA() {
 		BufferSize:        2048,
 		FlushInterval:     3 * time.Second,
 		MaxStoreDays:      5,
-		MaxSizePerLogFile: 204800000,
+		MaxSizePerLogFile: "1000B",
 		LogCount:          5,
 		LogFullPath:       "logs/app2.log",
 		Lv:                jlog.DEBUG,

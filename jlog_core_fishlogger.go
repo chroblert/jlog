@@ -4,10 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
-	"strconv"
 	"sync"
-	"unicode"
-
 	//"github.com/fatih/color"
 	"github.com/chroblert/jlog/jthirdutil/color"
 	"os"
@@ -22,10 +19,11 @@ type FishLogger struct {
 	console           bool // 标准输出  默认 false
 	verbose           bool // 是否输出行号和文件名 默认 false
 	iniCreateNewLog   bool
-	maxStoreDays      int           // 最大保留天数
-	maxSizePerLogFile int64         // 单个日志最大容量(纯日志内容，不计算提示信息) 默认 500MB
-	size              int64         // 累计大小 无后缀
-	logFullPath       string        // 文件目录 完整路径 logFullPath=logFileName+logFileExt
+	maxStoreDays      int    // 最大保留天数
+	maxSizePerLogFile int64  // 单个日志最大容量(纯日志内容，不计算提示信息) 默认 500MB
+	size              int64  // 累计大小 无后缀
+	logFullPath       string // 文件目录 完整路径 logFullPath=logFileName+logFileExt
+	logFilePerm       os.FileMode
 	logFileName       string        // 文件名
 	logFileExt        string        // 文件后缀名 默认 .log
 	logCreateDate     string        // 文件创建日期
@@ -59,35 +57,40 @@ func (fl *FishLogger) SetLogLevel(lv logLevel) {
 }
 
 // 设置日志文件路径. eg: logs/app.log
+// windows: \,/均作为分隔符
+// linux: 将/作为路径分隔符[!!]
 func (fl *FishLogger) SetLogFullPath(logFullPath string, mode ...os.FileMode) error {
 	fl.mu.Lock()
 	defer fl.mu.Unlock()
-	fl.logFullPath = strings.ReplaceAll(logFullPath, "\\", "/")
-	fmt.Println("fl.logFullPath:", fl.logFullPath)
+	//fl.logFullPath = strings.ReplaceAll(logFullPath, "\\", "/")
+	//fmt.Println("fl.logFullPath:", fl.logFullPath)
 	//日志文件路径设置
 	fl.logFileExt = filepath.Ext(fl.logFullPath) // .log
-	fmt.Println(fl.logFileExt)
+	//fmt.Println(fl.logFileExt)
 	fl.logFileName = strings.TrimSuffix(fl.logFullPath, fl.logFileExt) // logs/app
 	if fl.logFileExt == "" {
 		fl.logFileExt = ".log"
 	}
+	var err error = nil
 	if strings.HasSuffix(fl.logFileName, "/") {
-		return fmt.Errorf("please specify correct log file path.eg: logs/app.log")
+		fl.logFileName = fl.logFileName + "app"
+		err = fmt.Errorf("please specify correct log file path.eg: logs/app.log")
 	}
-	fmt.Println("name:", fl.logFileName)
-	fmt.Println("path:", filepath.Dir(fl.logFullPath))
+	//fmt.Println("name:", fl.logFileName)
+	//fmt.Println("path:", filepath.Dir(fl.logFullPath))
 	if len(mode) == 0 {
-		err := os.MkdirAll(filepath.Dir(fl.logFullPath), 0644)
+		err = os.MkdirAll(filepath.Dir(fl.logFullPath), 0644)
 		if err != nil {
-			return err
+			panic(err)
 		}
 	} else {
-		err := os.MkdirAll(filepath.Dir(fl.logFullPath), mode[0])
+		err = os.MkdirAll(filepath.Dir(fl.logFullPath), mode[0])
 		if err != nil {
-			return err
+			panic(err)
 		}
+		fl.logFilePerm = mode[0]
 	}
-	return nil
+	return err
 }
 
 // 设置日志文件大小 SetMaxSizePerLogFile
@@ -100,40 +103,40 @@ func (fl *FishLogger) SetLogFullPath(logFullPath string, mode ...os.FileMode) er
 
 // 设置日志文件大小 SetMaxSizePerLogFile
 // eg. 10B,10KB,10MB,10GB. if not set correctly,will use default value 500MB.
-func (fl *FishLogger) SetMaxSizePerLogFile(logFileSizeStr string) error {
+func (fl *FishLogger) SetMaxSizePerLogFile(logFileSizeStr string) {
 	fl.mu.Lock()
 	defer fl.mu.Unlock()
+	fl.maxSizePerLogFile = transformFilesizeStrToInt64(logFileSizeStr)
 	//var dwRange = []byte("0123456789BKMG")
-	var number int64 = 0
-	var logfileSize int64 = 0
-	var err error = nil
-	for i, c := range logFileSizeStr {
-		if unicode.IsDigit(c) {
-			tmpNum, _ := strconv.Atoi(string(c))
-			number = number*10 + int64(tmpNum)
-		} else {
-			switch logFileSizeStr[i:] {
-			case "B":
-				logfileSize = number
-			case "KB":
-				logfileSize = number * 1024
-			case "MB":
-				logfileSize = number * 1024 * 1024
-			case "GB":
-				logfileSize = number * 1024 * 1024 * 1024
-			default:
-				logfileSize = 500 * 1024 * 1024
-				err = fmt.Errorf("please specify correct file size.eg: 10B,10KB,10MB,10GB. use default value.500MB")
-			}
-			break
-		}
-	}
-	if logfileSize == 0 {
-		logfileSize = 500 * 1024 * 1024
-	}
-	fl.maxSizePerLogFile = logfileSize
-	fmt.Println("size:", fl.maxSizePerLogFile)
-	return err
+	//var number int64 = 0
+	//var logfileSize int64 = 0
+	//var err error = nil
+	//for i, c := range logFileSizeStr {
+	//	if unicode.IsDigit(c) {
+	//		tmpNum, _ := strconv.Atoi(string(c))
+	//		number = number*10 + int64(tmpNum)
+	//	} else {
+	//		switch logFileSizeStr[i:] {
+	//		case "B":
+	//			logfileSize = number
+	//		case "KB":
+	//			logfileSize = number * 1024
+	//		case "MB":
+	//			logfileSize = number * 1024 * 1024
+	//		case "GB":
+	//			logfileSize = number * 1024 * 1024 * 1024
+	//		default:
+	//			logfileSize = 500 * 1024 * 1024
+	//			err = fmt.Errorf("please specify correct file size.eg: 10B,10KB,10MB,10GB. use default value.500MB")
+	//		}
+	//		break
+	//	}
+	//}
+	//if logfileSize == 0 {
+	//	logfileSize = 500 * 1024 * 1024
+	//}
+	//fl.maxSizePerLogFile = logfileSize
+	//fmt.Println("size:", fl.maxSizePerLogFile)
 }
 
 // iniCreateNewLog
@@ -479,7 +482,7 @@ func (fl *FishLogger) rotate() error {
 			return err
 		}
 		// 创建新日志文件app.log
-		newLogFile, err := os.OpenFile(fl.logFullPath, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
+		newLogFile, err := os.OpenFile(fl.logFullPath, os.O_CREATE|os.O_RDWR|os.O_APPEND, fl.logFilePerm)
 		if err != nil {
 			return err
 		}
@@ -505,7 +508,7 @@ func (fl *FishLogger) rotate() error {
 			}
 		}
 		// 创建或打开日志文件app.log
-		newLogFile, err := os.OpenFile(fl.logFullPath, os.O_CREATE|os.O_RDWR|os.O_APPEND, 0666)
+		newLogFile, err := os.OpenFile(fl.logFullPath, os.O_CREATE|os.O_RDWR|os.O_APPEND, fl.logFilePerm)
 		if err != nil {
 			return err
 		}

@@ -13,25 +13,27 @@ func main() {
 		BufferSize:        0,
 		FlushInterval:     0,
 		MaxStoreDays:      0,
-		MaxSizePerLogFile: 1024,
+		MaxSizePerLogFile: "1000B",
 		LogCount:          0,
 		LogFullPath:       "",
 		Lv:                0,
 		UseConsole:        true,
-		Verbose:           false,
+		Verbose:           true,
 		InitCreateNewLog:  false,
 		StoreToFile:       true,
+		LogFilePerm:       0,
 	})
-	jlog.SetStoreToFile(true)
-	jlog.SetMaxStoreDays(4)
-	jlog.IsIniCreateNewLog(false)
-	jlog.SetLogFullPath("logs\\test.log")
-	jlog.SetLevel(jlog.DEBUG)
-	jlog.SetMaxSizePerLogFile(1024)
-	jlog.SetVerbose(false)
-	jlog.Info("info")
+	//jlog.SetStoreToFile(true)
+	//jlog.SetMaxStoreDays(4)
+	nlog.IsIniCreateNewLog(false)
+	nlog.SetLogFullPath("logs/1", 0777)
+	//jlog.SetLevel(jlog.DEBUG)
+	nlog.SetMaxSizePerLogFile("10MB")
+	//jlog.SetVerbose(true)
+	//jlog.Info("info1")
+	//jlog.Warn("warn1")
 	nlog.Error("error")
-	nlog.Info("info")
+	nlog.Info("info2")
 	for i := 0; i < 10; i++ {
 		nlog.NErrorf("a")
 	}

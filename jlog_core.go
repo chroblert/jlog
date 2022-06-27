@@ -26,7 +26,7 @@ func newLogger(logConf LogConfig) *FishLogger {
 	fl.bufferSize = logConf.BufferSize
 	fl.flushInterval = logConf.FlushInterval
 	fl.maxStoreDays = logConf.MaxStoreDays
-	fl.maxSizePerLogFile = logConf.MaxSizePerLogFile
+	fl.maxSizePerLogFile = transformFilesizeStrToInt64(logConf.MaxSizePerLogFile)
 	fl.logCount = logConf.LogCount
 	fl.logFullPath = logConf.LogFullPath // logs/app.log
 	fl.level = logConf.Lv
@@ -34,6 +34,7 @@ func newLogger(logConf LogConfig) *FishLogger {
 	fl.verbose = logConf.Verbose
 	fl.iniCreateNewLog = logConf.InitCreateNewLog
 	fl.storeToFile = logConf.StoreToFile
+	fl.logFilePerm = logConf.LogFilePerm
 
 	fl.pool = sync.Pool{
 		New: func() interface{} {
@@ -47,14 +48,14 @@ func newLogger(logConf LogConfig) *FishLogger {
 	//日志文件路径设置
 	// 若未传入明文路径，则使用logs\app.log作为默认路径
 	if len(strings.TrimSpace(fl.logFullPath)) == 0 {
-		fl.logFullPath = "logs\\app.log"
+		fl.logFullPath = "logs/app.log"
 	}
 	fl.logFileExt = filepath.Ext(fl.logFullPath)                       // .log
 	fl.logFileName = strings.TrimSuffix(fl.logFullPath, fl.logFileExt) // logs/app
 	if fl.logFileExt == "" {
 		fl.logFileExt = ".log"
 	}
-	os.MkdirAll(filepath.Dir(fl.logFullPath), 0666)
+	os.MkdirAll(filepath.Dir(fl.logFullPath), fl.logFilePerm)
 	if fl.flushInterval < 1 {
 		fl.flushInterval = 10 * time.Second
 	}
@@ -70,8 +71,17 @@ func newLogger(logConf LogConfig) *FishLogger {
 func New(logConfs ...LogConfig) *FishLogger {
 	if len(logConfs) == 1 {
 		logConf := logConfs[0]
-		if logConf.MaxSizePerLogFile < 1 {
-			logConf.MaxSizePerLogFile = 524288000
+		//if logConf.MaxSizePerLogFile < 1 {
+		//	logConf.MaxSizePerLogFile = 524288000
+		//}
+		if logConf.LogFilePerm == 0 {
+			logConf.LogFilePerm = 0644
+		}
+		if logConf.BufferSize == 0 {
+			logConf.BufferSize = 2048
+		}
+		if logConf.FlushInterval == 0 {
+			logConf.FlushInterval = 10 * time.Second
 		}
 		return newLogger(logConf)
 	}
@@ -79,9 +89,10 @@ func New(logConfs ...LogConfig) *FishLogger {
 		BufferSize:        2048,
 		FlushInterval:     10 * time.Second,
 		MaxStoreDays:      -1,
-		MaxSizePerLogFile: 524288000, // 500MB
+		MaxSizePerLogFile: "500MB", // 500MB
 		LogCount:          -1,
 		LogFullPath:       "logs/app.log",
+		LogFilePerm:       0644,
 		Lv:                DEBUG,
 		UseConsole:        true,
 		Verbose:           true,
