@@ -37,12 +37,12 @@ func IsIniCreateNewLog(iniCreateNewLog bool) {
 }
 
 // 设置文件保存路径
-func SetLogFullPath(logFullPath string) {
-	fishLogger.SetLogFullPath(logFullPath)
+func SetLogFullPath(logFullPath string) error {
+	return fishLogger.SetLogFullPath(logFullPath)
 }
 
-func SetMaxSizePerLogFile(logfilesize int64) {
-	fishLogger.SetMaxSizePerLogFile(logfilesize)
+func SetMaxSizePerLogFile(logfileSize string) {
+	fishLogger.SetMaxSizePerLogFile(logfileSize)
 }
 
 // 设置是否保存到文件

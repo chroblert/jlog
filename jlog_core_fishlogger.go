@@ -4,7 +4,10 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"strconv"
 	"sync"
+	"unicode"
+
 	//"github.com/fatih/color"
 	"github.com/chroblert/jlog/jthirdutil/color"
 	"os"
@@ -55,26 +58,82 @@ func (fl *FishLogger) SetLogLevel(lv logLevel) {
 	fl.level = lv
 }
 
-// 设置日志文件路径
-func (fl *FishLogger) SetLogFullPath(logFullPath string) {
+// 设置日志文件路径. eg: logs/app.log
+func (fl *FishLogger) SetLogFullPath(logFullPath string, mode ...os.FileMode) error {
 	fl.mu.Lock()
 	defer fl.mu.Unlock()
-	fl.logFullPath = logFullPath
+	fl.logFullPath = strings.ReplaceAll(logFullPath, "\\", "/")
+	fmt.Println("fl.logFullPath:", fl.logFullPath)
 	//日志文件路径设置
-	fl.logFileExt = filepath.Ext(fl.logFullPath)                       // .log
+	fl.logFileExt = filepath.Ext(fl.logFullPath) // .log
+	fmt.Println(fl.logFileExt)
 	fl.logFileName = strings.TrimSuffix(fl.logFullPath, fl.logFileExt) // logs/app
 	if fl.logFileExt == "" {
 		fl.logFileExt = ".log"
 	}
-	os.MkdirAll(filepath.Dir(fl.logFullPath), 0666)
+	if strings.HasSuffix(fl.logFileName, "/") {
+		return fmt.Errorf("please specify correct log file path.eg: logs/app.log")
+	}
+	fmt.Println("name:", fl.logFileName)
+	fmt.Println("path:", filepath.Dir(fl.logFullPath))
+	if len(mode) == 0 {
+		err := os.MkdirAll(filepath.Dir(fl.logFullPath), 0644)
+		if err != nil {
+			return err
+		}
+	} else {
+		err := os.MkdirAll(filepath.Dir(fl.logFullPath), mode[0])
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // 设置日志文件大小 SetMaxSizePerLogFile
-func (fl *FishLogger) SetMaxSizePerLogFile(logfilesize int64) {
+//func (fl *FishLogger) SetMaxSizePerLogFile(logfilesize int64) {
+//	fl.mu.Lock()
+//	defer fl.mu.Unlock()
+//	//fl.maxStoreDays = ma
+//	fl.maxSizePerLogFile = logfilesize
+//}
+
+// 设置日志文件大小 SetMaxSizePerLogFile
+// eg. 10B,10KB,10MB,10GB. if not set correctly,will use default value 500MB.
+func (fl *FishLogger) SetMaxSizePerLogFile(logFileSizeStr string) error {
 	fl.mu.Lock()
 	defer fl.mu.Unlock()
-	//fl.maxStoreDays = ma
-	fl.maxSizePerLogFile = logfilesize
+	//var dwRange = []byte("0123456789BKMG")
+	var number int64 = 0
+	var logfileSize int64 = 0
+	var err error = nil
+	for i, c := range logFileSizeStr {
+		if unicode.IsDigit(c) {
+			tmpNum, _ := strconv.Atoi(string(c))
+			number = number*10 + int64(tmpNum)
+		} else {
+			switch logFileSizeStr[i:] {
+			case "B":
+				logfileSize = number
+			case "KB":
+				logfileSize = number * 1024
+			case "MB":
+				logfileSize = number * 1024 * 1024
+			case "GB":
+				logfileSize = number * 1024 * 1024 * 1024
+			default:
+				logfileSize = 500 * 1024 * 1024
+				err = fmt.Errorf("please specify correct file size.eg: 10B,10KB,10MB,10GB. use default value.500MB")
+			}
+			break
+		}
+	}
+	if logfileSize == 0 {
+		logfileSize = 500 * 1024 * 1024
+	}
+	fl.maxSizePerLogFile = logfileSize
+	fmt.Println("size:", fl.maxSizePerLogFile)
+	return err
 }
 
 // iniCreateNewLog
