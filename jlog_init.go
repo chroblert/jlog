@@ -69,6 +69,7 @@ type LogConfig struct {
 	LogCount          int
 	LogFullPath       string
 	LogFilePerm       os.FileMode
+	LogDirPerm        os.FileMode
 	Lv                logLevel
 	UseConsole        bool
 	Verbose           bool

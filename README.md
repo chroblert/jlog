@@ -33,7 +33,7 @@ jlog.Flush()                             // 写入文件 // 主程序结束前�
 jlog.SetStoreToFile(true)                // 设置是否将日志存储到本地文件中
 jlog.SetMaxStoreDays(4)                  // 是指日志文件最多存储多少天 -1表示无限
 jlog.IsIniCreateNewLog(false)            // 设置每次使用jlog的时候是否新建一个日志文件
-jlog.SetLogFullPath("logs/test.log",0777)// 设置日志保存的全路径.第二个参数可以传入权限，若不传，则默认0644
+jlog.SetLogFullPath("logs/test.log",0755,0644)// 设置日志保存的全路径.第二个参数可以传入目录权限，若不传，则默认0755；第三个参数可以传入文件权限，若不传，则默认0644
                                          // 注意： windows下：\,/均可作为路径分隔符;linux下：/作为分隔符[!!]
 jlog.SetLevel(jlog.DEBUG)                // 设置日志等级，只有不低于该等级的日志才会显示
 jlog.SetVerbose(false)                   // 设置是否显示调用jlog的文件名及行号
@@ -73,6 +73,7 @@ MaxSizePerLogFile: "10MB",
 LogCount:          -1,
 LogFullPath:       "logs/app.log",
 LogFilePerm:       0644,
+LogDirPerm:        0775,
 Lv:                jlog.DEBUG,
 UseConsole:        true,
 Verbose:           false,

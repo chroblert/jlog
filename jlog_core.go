@@ -35,6 +35,7 @@ func newLogger(logConf LogConfig) *FishLogger {
 	fl.iniCreateNewLog = logConf.InitCreateNewLog
 	fl.storeToFile = logConf.StoreToFile
 	fl.logFilePerm = logConf.LogFilePerm
+	fl.logDirPerm = logConf.LogDirPerm
 
 	fl.pool = sync.Pool{
 		New: func() interface{} {
@@ -55,7 +56,7 @@ func newLogger(logConf LogConfig) *FishLogger {
 	if fl.logFileExt == "" {
 		fl.logFileExt = ".log"
 	}
-	os.MkdirAll(filepath.Dir(fl.logFullPath), fl.logFilePerm)
+	os.MkdirAll(filepath.Dir(fl.logFullPath), fl.logDirPerm)
 	if fl.flushInterval < 1 {
 		fl.flushInterval = 10 * time.Second
 	}
@@ -77,6 +78,9 @@ func New(logConfs ...LogConfig) *FishLogger {
 		if logConf.LogFilePerm == 0 {
 			logConf.LogFilePerm = 0644
 		}
+		if logConf.LogDirPerm == 0 {
+			logConf.LogFilePerm = 0775
+		}
 		if logConf.BufferSize == 0 {
 			logConf.BufferSize = 2048
 		}
@@ -93,6 +97,7 @@ func New(logConfs ...LogConfig) *FishLogger {
 		LogCount:          -1,
 		LogFullPath:       "logs/app.log",
 		LogFilePerm:       0644,
+		LogDirPerm:        0775,
 		Lv:                DEBUG,
 		UseConsole:        true,
 		Verbose:           true,

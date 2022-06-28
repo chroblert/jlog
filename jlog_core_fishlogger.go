@@ -24,6 +24,7 @@ type FishLogger struct {
 	size              int64  // 累计大小 无后缀
 	logFullPath       string // 文件目录 完整路径 logFullPath=logFileName+logFileExt
 	logFilePerm       os.FileMode
+	logDirPerm        os.FileMode
 	logFileName       string        // 文件名
 	logFileExt        string        // 文件后缀名 默认 .log
 	logCreateDate     string        // 文件创建日期
@@ -80,7 +81,7 @@ func (fl *FishLogger) SetLogFullPath(logFullPath string, mode ...os.FileMode) er
 	//fmt.Println("name:", fl.logFileName)
 	//fmt.Println("path:", filepath.Dir(fl.logFullPath))
 	if len(mode) == 0 {
-		err = os.MkdirAll(filepath.Dir(fl.logFullPath), 0644)
+		err = os.MkdirAll(filepath.Dir(fl.logFullPath), 0775)
 		if err != nil {
 			panic(err)
 		}
@@ -89,7 +90,11 @@ func (fl *FishLogger) SetLogFullPath(logFullPath string, mode ...os.FileMode) er
 		if err != nil {
 			panic(err)
 		}
-		fl.logFilePerm = mode[0]
+		if len(mode) > 1 {
+			fl.logFilePerm = mode[1]
+		} else {
+			fl.logFilePerm = 0644
+		}
 	}
 	return err
 }
