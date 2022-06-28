@@ -52,6 +52,7 @@ var (
 		LogCount:          -1,
 		LogFullPath:       "logs/app.log",
 		LogFilePerm:       0644,
+		LogDirPerm:        0755,
 		Lv:                DEBUG,
 		UseConsole:        true,
 		Verbose:           true,
