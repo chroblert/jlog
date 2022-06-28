@@ -37,7 +37,7 @@ func main() {
 	//for i := 0; i < 10; i++ {
 	//	nlog.NErrorf("a")
 	//}
-	jlog.SetLogFullPath("logs/testd.log", 0755, 0644)
+	jlog.SetLogFullPath("logs/testd.log", 0777, 0644)
 	jlog.Info("jlog test")
 	jlog.Flush()
 }

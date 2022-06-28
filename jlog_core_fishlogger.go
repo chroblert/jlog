@@ -88,14 +88,17 @@ func (fl *FishLogger) SetLogFullPath(logFullPath string, mode ...os.FileMode) er
 		//fl.logDirPerm = 0755
 		//fl.logFilePerm = 0644
 	} else {
-		err = os.MkdirAll(filepath.Dir(fl.logFullPath), mode[0])
-		if err != nil {
-			panic(err)
-		}
-		if len(mode) > 1 {
-			fl.logFilePerm = mode[1]
+		if filepath.Dir(fl.logFullPath) == "logs" {
+			err = os.Chmod(filepath.Dir(fl.logFullPath), mode[0])
 		} else {
-			fl.logFilePerm = 0644
+			err = os.MkdirAll(filepath.Dir(fl.logFullPath), mode[0])
+			if err != nil {
+				panic(err)
+			}
+			fl.logDirPerm = mode[0]
+			if len(mode) > 1 {
+				fl.logFilePerm = mode[1]
+			}
 		}
 	}
 	return err
