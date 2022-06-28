@@ -63,6 +63,7 @@ func (fl *FishLogger) SetLogFullPath(logFullPath string, mode ...os.FileMode) er
 	fl.mu.Lock()
 	defer fl.mu.Unlock()
 	//fl.logFullPath = strings.ReplaceAll(logFullPath, "\\", "/")
+	fl.logFullPath = logFullPath
 	//fmt.Println("fl.logFullPath:", fl.logFullPath)
 	//日志文件路径设置
 	fl.logFileExt = filepath.Ext(fl.logFullPath) // .log

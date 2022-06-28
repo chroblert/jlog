@@ -5,7 +5,6 @@ import (
 )
 
 // 设置
-
 func SetVerbose(b bool) {
 	fishLogger.setVerbose(b)
 }
@@ -26,7 +25,8 @@ func SetMaxStoreDays(ma int) {
 	fishLogger.SetMaxStoreDays(ma)
 }
 
-// 设置日志文件保存数量
+// 设置日志文件最大保存数量
+// 小于0不删除
 func SetLogCount(logCount int) {
 	fishLogger.SetLogCount(logCount)
 }
@@ -36,11 +36,15 @@ func IsIniCreateNewLog(iniCreateNewLog bool) {
 	fishLogger.IsIniCreateNewLog(iniCreateNewLog)
 }
 
-// 设置文件保存路径
-func SetLogFullPath(logFullPath string) error {
-	return fishLogger.SetLogFullPath(logFullPath)
+// 设置日志文件路径. eg: logs/app.log
+// windows: \,/均作为分隔符
+// linux: 将/作为路径分隔符[!!]
+func SetLogFullPath(logFullPath string, mode ...os.FileMode) error {
+	return fishLogger.SetLogFullPath(logFullPath, mode...)
 }
 
+// 设置日志文件大小 SetMaxSizePerLogFile
+// eg. 10B,10KB,10MB,10GB. if not set correctly,will use default value 500MB.
 func SetMaxSizePerLogFile(logfileSize string) {
 	fishLogger.SetMaxSizePerLogFile(logfileSize)
 }

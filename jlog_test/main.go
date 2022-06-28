@@ -26,7 +26,7 @@ func main() {
 	//jlog.SetStoreToFile(true)
 	//jlog.SetMaxStoreDays(4)
 	nlog.IsIniCreateNewLog(false)
-	nlog.SetLogFullPath("logs/1", 0777)
+	nlog.SetLogFullPath("logs/1111.test", 0777)
 	//jlog.SetLevel(jlog.DEBUG)
 	nlog.SetMaxSizePerLogFile("10MB")
 	//jlog.SetVerbose(true)
@@ -37,5 +37,7 @@ func main() {
 	for i := 0; i < 10; i++ {
 		nlog.NErrorf("a")
 	}
+	jlog.SetLogFullPath("logxxs/testd.log", 0777)
+	jlog.Info("jlog test")
 
 }
