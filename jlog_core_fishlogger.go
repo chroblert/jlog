@@ -453,7 +453,9 @@ func (fl *FishLogger) flushSync() {
 
 func (fl *FishLogger) exit(err error) {
 	fmt.Fprintf(os.Stderr, "logs: exiting because of error: %s\n", err)
-	fl.flushSync()
+	if err == nil {
+		fl.flushSync()
+	}
 	os.Exit(0)
 }
 
