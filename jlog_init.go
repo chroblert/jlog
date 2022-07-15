@@ -7,31 +7,6 @@ import (
 	"unicode"
 )
 
-//
-//var applog = new(FishLogger)
-//
-//// 20201011: 使用Logs
-//func InitLogs(logpath string, amaxSize int64, amaxAge, alogCount int) {
-//	maxSize = amaxSize // 单个文件最大大小
-//	maxAge = amaxAge   // 单个文件保存2天
-//	LogCount = alogCount
-//	applog = newLogger(logpath)
-//	defer applog.Flush()
-//	applog.SetLogLevel(DEBUG)
-//	applog.setVerbose(true)
-//	applog.SetUseConsole(true)
-//	//applog.info("test")
-//}
-//func Println(args ...interface{}) {
-//	// applog.info(args)
-//	applog.println(INFO, args...)
-//}
-//
-//func Printf(format string, args ...interface{}) {
-//	// applog.infof(format, args...)
-//	applog.printf(INFO, format, args...)
-//}
-
 const (
 	DEBUG logLevel = iota
 	INFO
@@ -62,11 +37,10 @@ var (
 )
 
 type LogConfig struct {
-	BufferSize    int
-	FlushInterval time.Duration // 单位ms。若为0，则默认设置10s
-	MaxStoreDays  int
-	//MaxSizePerLogFile int64 // 单位B，默认500M
-	MaxSizePerLogFile string // 单位B，默认500M
+	BufferSize        int
+	FlushInterval     time.Duration // unit:ms。if value is 0，then use default 10s
+	MaxStoreDays      int
+	MaxSizePerLogFile string // unit:B，default 500M
 	LogCount          int
 	LogFullPath       string
 	LogFilePerm       os.FileMode
@@ -78,8 +52,8 @@ type LogConfig struct {
 	StoreToFile       bool
 }
 
-// 将描述性文件大小转为int64。支持：B,KB,MB,GB
-// 若不符合格式或大小为0，则设置默认值 500MB
+// transform fileSizeStr to int64。support：B,KB,MB,GB
+// if set illegal value or value size is 0,use default value 500MB
 func transformFilesizeStrToInt64(logFileSizeStr string) int64 {
 	var number int64 = 0
 	var logfileSize int64 = 0

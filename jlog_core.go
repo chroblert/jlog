@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// 字符串等级
+// log level
 func (lv logLevel) Str() string {
 	if lv >= DEBUG && lv <= FATAL {
 		return logShort[lv*3 : lv*3+3]
@@ -18,11 +18,11 @@ func (lv logLevel) Str() string {
 	return "[N]"
 }
 
-// newLogger 实例化logger
-// path 日志完整路径 eg:logs/app.log
+// newLogger instance logger
+// path log file full path. eg:logs/app.log
 func newLogger(logConf LogConfig) *FishLogger {
 	fl := new(FishLogger)
-	// 日志配置
+	// set log config
 	fl.bufferSize = logConf.BufferSize
 	fl.flushInterval = logConf.FlushInterval
 	fl.maxStoreDays = logConf.MaxStoreDays
@@ -42,12 +42,12 @@ func newLogger(logConf LogConfig) *FishLogger {
 			return new(buffer)
 		},
 	}
-	// 220509: 设置不将日志保存到文件
+	// 220509: not save log to log file
 	if !fl.storeToFile {
 		return fl
 	}
-	//日志文件路径设置
-	// 若未传入明文路径，则使用logs\app.log作为默认路径
+	// set log file path
+	// if not specify logfile path, use logs/app.log as default log file path
 	if len(strings.TrimSpace(fl.logFullPath)) == 0 {
 		fl.logFullPath = "logs/app.log"
 	}
@@ -66,9 +66,11 @@ func newLogger(logConf LogConfig) *FishLogger {
 	return fl
 }
 
-// 新建一个jlog示例
-// 若不传入LogConfig，则使用默认的只进行创建。每十秒将日志写入文件，不限制存储天数和文件个数，单日志文件大小500MB，在控制台显示，每次运行不新建日志文件
-// 否则，根据传入的LogConfig创建jlog示例
+// create a new instance
+// if not specify LogConfig, use default configuration to create.
+// 		write data to log file per 10 second
+// 		no limit store days,no limit log file count, max file size 500MB per file,displayed in console,create new log file only when first run or log file size > 500MB
+// or create new instance with specified LogConfig
 func New(logConfs ...LogConfig) *FishLogger {
 	if len(logConfs) == 1 {
 		logConf := logConfs[0]

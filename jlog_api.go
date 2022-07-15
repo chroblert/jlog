@@ -4,57 +4,57 @@ import (
 	"os"
 )
 
-// 设置
+// set if print log header
 func SetVerbose(b bool) {
 	fishLogger.setVerbose(b)
 }
 
-// 设置控制台输出
+// set if displayed in console
 func SetUseConsole(b bool) {
 	fishLogger.SetUseConsole(b)
 }
 
-// 设置实例等级
+// set log level
 func SetLevel(lv logLevel) {
 	fishLogger.SetLogLevel(lv)
 }
 
-// 设置最大保存天数
-// 小于0不删除
+// set max store days
+// never delete if ma < 0
 func SetMaxStoreDays(ma int) {
 	fishLogger.SetMaxStoreDays(ma)
 }
 
-// 设置日志文件最大保存数量
-// 小于0不删除
+// set max log file count
+// never delete if logCount < 0
 func SetLogCount(logCount int) {
 	fishLogger.SetLogCount(logCount)
 }
 
-// 第一次运行是否新建日志
+// if create new log file when first run
 func IsIniCreateNewLog(iniCreateNewLog bool) {
 	fishLogger.IsIniCreateNewLog(iniCreateNewLog)
 }
 
-// 设置日志文件路径. eg: logs/app.log
-// windows: \,/均作为分隔符
-// linux: 将/作为路径分隔符[!!]
+// set log file path. eg: logs/app.log
+// windows: \,/ as path delimter
+// linux: only / as path delimter [!!]
 func SetLogFullPath(logFullPath string, mode ...os.FileMode) error {
 	return fishLogger.SetLogFullPath(logFullPath, mode...)
 }
 
-// 设置日志文件大小 SetMaxSizePerLogFile
+// set max log file size
 // eg. 10B,10KB,10MB,10GB. if not set correctly,will use default value 500MB.
 func SetMaxSizePerLogFile(logfileSize string) {
 	fishLogger.SetMaxSizePerLogFile(logfileSize)
 }
 
-// 设置是否保存到文件
+// set if save log to log file
 func SetStoreToFile(b bool) {
 	fishLogger.SetStoreToFile(b)
 }
 
-// -------- 实例 fishLogger
+// -------- instance fishLogger
 func Println(args ...interface{}) {
 	fishLogger.nprintln(DEBUG, args...)
 }
@@ -104,7 +104,7 @@ func Fatalf(format string, args ...interface{}) {
 	os.Exit(0)
 }
 
-// 写入文件
+// flush to file
 func Flush() {
 	//fmt.Println("size1:",fishLogger.writer.Buffered())
 	fishLogger.Flush()
