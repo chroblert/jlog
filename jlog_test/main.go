@@ -38,9 +38,9 @@ func main() {
 	//	nlog.NErrorf("a")
 	//}
 	defer jlog.Flush()
-	jlog.SetLogFullPath("logs/testd.log", 0777, 0644)
-	jlog.NInfo("jlog test")
-	jlog.Flush()
+	jlog.SetLogFullPath("logs/tesxtdll2.log", 0777, 0644)
+	//jlog.NInfo("jlog test")
+	//jlog.Flush()
 	jlog.NInfo(jlog.GetCurrentFileSize())
 
 	jlog.NInfo(jlog.GetAllWritedSize())

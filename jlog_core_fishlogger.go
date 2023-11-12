@@ -98,6 +98,14 @@ func (fl *FishLogger) SetLogFullPath(logFullPath string, mode ...os.FileMode) er
 			}
 		}
 	}
+	// 设置size
+	fileInfo, err := os.Stat(fl.logFullPath)
+	if err == nil {
+		fmt.Println("设置fl.size:", fileInfo.Size())
+		fl.size = fileInfo.Size()
+	} else {
+		fl.size = 0
+	}
 	return err
 }
 
