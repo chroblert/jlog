@@ -20,7 +20,7 @@ type FishLogger struct {
 	iniCreateNewLog   bool
 	maxStoreDays      int    // max store days
 	maxSizePerLogFile int64  // max log file size per file. default 500MB
-	size              int64  // all size
+	size              int64  // all size，文件切割后，归0
 	logFullPath       string //  logFullPath=logFileName+logFileExt
 	logFilePerm       os.FileMode
 	logDirPerm        os.FileMode
@@ -36,6 +36,7 @@ type FishLogger struct {
 	writer            *bufio.Writer // buffer io
 	file              *os.File      // log file object
 	storeToFile       bool          // if save log data to file
+	writed_size       int64         // 已经写入大小，文件切割后，不归0
 }
 
 type buffer struct {
@@ -100,7 +101,8 @@ func (fl *FishLogger) SetLogFullPath(logFullPath string, mode ...os.FileMode) er
 	return err
 }
 
-//  SetMaxSizePerLogFile
+//	SetMaxSizePerLogFile
+//
 // eg. 10B,10KB,10MB,10GB. if not set correctly,will use default value 500MB.
 func (fl *FishLogger) SetMaxSizePerLogFile(logFileSizeStr string) {
 	fl.mu.Lock()
@@ -268,6 +270,7 @@ func (fl *FishLogger) write(lv logLevel, buf *buffer, isverbose bool) {
 	fl.mu.Lock()
 	defer fl.mu.Unlock()
 	data := buf.Bytes()
+	fl.writed_size += int64(len(data))
 	if fl.console {
 		switch lv {
 		case DEBUG:
@@ -386,11 +389,14 @@ func (fl *FishLogger) exit(err error) {
 // rotate
 // rotate file
 // if first write data to file，
-//       -> check if app.log exist,if exist,then rename file
-//		 -> create log file 'app.log'
-//		 -> check current log file count if less than logCount config.if greater then delete old log file
+//
+//	      -> check if app.log exist,if exist,then rename file
+//			 -> create log file 'app.log'
+//			 -> check current log file count if less than logCount config.if greater then delete old log file
+//
 // if not first write data to file，
-//       -> check if current log file size less than maxLogFileSize.if not,delete old file
+//
+//	-> check if current log file size less than maxLogFileSize.if not,delete old file
 func (fl *FishLogger) rotate() error {
 	now := time.Now()
 	// rotate file

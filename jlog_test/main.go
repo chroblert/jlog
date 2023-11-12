@@ -5,7 +5,7 @@ import (
 )
 
 var (
-//nlog *jlog.FishLogger
+// nlog *jlog.FishLogger
 )
 
 func main() {
@@ -37,7 +37,11 @@ func main() {
 	//for i := 0; i < 10; i++ {
 	//	nlog.NErrorf("a")
 	//}
+	defer jlog.Flush()
 	jlog.SetLogFullPath("logs/testd.log", 0777, 0644)
-	jlog.Info("jlog test")
+	jlog.NInfo("jlog test")
 	jlog.Flush()
+	jlog.NInfo(jlog.GetCurrentFileSize())
+
+	jlog.NInfo(jlog.GetAllWritedSize())
 }

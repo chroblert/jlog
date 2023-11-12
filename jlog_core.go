@@ -36,7 +36,6 @@ func newLogger(logConf LogConfig) *FishLogger {
 	fl.storeToFile = logConf.StoreToFile
 	fl.logFilePerm = logConf.LogFilePerm
 	fl.logDirPerm = logConf.LogDirPerm
-
 	fl.pool = sync.Pool{
 		New: func() interface{} {
 			return new(buffer)
@@ -68,8 +67,10 @@ func newLogger(logConf LogConfig) *FishLogger {
 
 // create a new instance
 // if not specify LogConfig, use default configuration to create.
-// 		write data to log file per 10 second
-// 		no limit store days,no limit log file count, max file size 500MB per file,displayed in console,create new log file only when first run or log file size > 500MB
+//
+//	write data to log file per 10 second
+//	no limit store days,no limit log file count, max file size 500MB per file,displayed in console,create new log file only when first run or log file size > 500MB
+//
 // or create new instance with specified LogConfig
 func New(logConfs ...LogConfig) *FishLogger {
 	if len(logConfs) == 1 {
