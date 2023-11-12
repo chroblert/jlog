@@ -33,6 +33,7 @@ var (
 		Verbose:           true,
 		InitCreateNewLog:  false,
 		StoreToFile:       true,
+		RotateEveryDay:    false,
 	})
 )
 
@@ -50,6 +51,7 @@ type LogConfig struct {
 	Verbose           bool
 	InitCreateNewLog  bool
 	StoreToFile       bool
+	RotateEveryDay    bool
 }
 
 // transform fileSizeStr to int64。support：B,KB,MB,GB

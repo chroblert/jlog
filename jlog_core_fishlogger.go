@@ -37,6 +37,7 @@ type FishLogger struct {
 	file              *os.File      // log file object
 	storeToFile       bool          // if save log data to file
 	writed_size       int64         // 已经写入大小，文件切割后，不归0
+	rotate_everyday   bool          // 设置是否每天分割文件。指定的文件不是本日的，则会创建新文件。default：false
 }
 
 type buffer struct {
@@ -167,6 +168,13 @@ func (fl *FishLogger) SetStoreToFile(b bool) {
 	fl.mu.Lock()
 	defer fl.mu.Unlock()
 	fl.storeToFile = b
+}
+
+// set if rotate file every day
+func (fl *FishLogger) SetRotateEveryday(b bool) {
+	fl.mu.Lock()
+	defer fl.mu.Unlock()
+	fl.rotate_everyday = b
 }
 
 // generate log header
@@ -312,7 +320,7 @@ func (fl *FishLogger) write(lv logLevel, buf *buffer, isverbose bool) {
 	}
 
 	// rotate file per day
-	if fl.logCreateDate != time.Now().Format("2006/01/02") {
+	if fl.rotate_everyday && fl.logCreateDate != time.Now().Format("2006/01/02") {
 		go fl.delete() // check old file perday
 		if err := fl.rotate(); err != nil {
 			fl.exit(err)

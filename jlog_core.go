@@ -36,6 +36,7 @@ func newLogger(logConf LogConfig) *FishLogger {
 	fl.storeToFile = logConf.StoreToFile
 	fl.logFilePerm = logConf.LogFilePerm
 	fl.logDirPerm = logConf.LogDirPerm
+	fl.rotate_everyday = logConf.RotateEveryDay
 
 	fl.pool = sync.Pool{
 		New: func() interface{} {
@@ -114,5 +115,6 @@ func New(logConfs ...LogConfig) *FishLogger {
 		Verbose:           true,
 		InitCreateNewLog:  false,
 		StoreToFile:       true,
+		RotateEveryDay:    false,
 	})
 }

@@ -54,6 +54,11 @@ func SetStoreToFile(b bool) {
 	fishLogger.SetStoreToFile(b)
 }
 
+// set if rotate file every day
+func SetRotateEveryday(b bool) {
+	fishLogger.SetRotateEveryday(b)
+}
+
 // -------- instance fishLogger
 func Println(args ...interface{}) {
 	fishLogger.nprintln(DEBUG, args...)
