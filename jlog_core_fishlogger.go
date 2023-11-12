@@ -484,6 +484,20 @@ func (fl *FishLogger) rotate() error {
 }
 
 // user customer instance
+// 获取本次在所有文件中已经写入的大小
+func (fl *FishLogger) GetAllWritedSize() int64 {
+	fl.mu.Lock()
+	defer fl.mu.Unlock()
+	return fl.writed_size
+}
+
+// 获取在当前文件中已经写入的大小
+func (fl *FishLogger) GetCurrentFileSize() int64 {
+	fl.mu.Lock()
+	defer fl.mu.Unlock()
+	return fl.size
+}
+
 func (fl *FishLogger) Debug(args ...interface{}) {
 	fl.println(DEBUG, args...)
 }
