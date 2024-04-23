@@ -13,13 +13,13 @@ import (
 	"time"
 )
 
-// struct of FishLogger
+// FishLogger struct of FishLogger
 type FishLogger struct {
 	console           bool // displayed in console.default is false
 	verbose           bool // if print log header. default is false
 	iniCreateNewLog   bool
 	maxStoreDays      int    // max store days
-	maxSizePerLogFile int64  // max log file size per file. default 500MB
+	maxSizePerLogFile int64  // max log file size per file. default 500MB. -1 will not limit file size
 	size              int64  // all size，文件切割后，归0
 	logFullPath       string //  logFullPath=logFileName+logFileExt
 	logFilePerm       os.FileMode
@@ -113,6 +113,7 @@ func (fl *FishLogger) SetLogFullPath(logFullPath string, mode ...os.FileMode) er
 //	SetMaxSizePerLogFile
 //
 // eg. 10B,10KB,10MB,10GB. if not set correctly,will use default value 500MB.
+// if set to -1,will not limit log file size
 func (fl *FishLogger) SetMaxSizePerLogFile(logFileSizeStr string) {
 	fl.mu.Lock()
 	defer fl.mu.Unlock()
@@ -328,8 +329,8 @@ func (fl *FishLogger) write(lv logLevel, buf *buffer, isverbose bool) {
 	}
 
 	// rotate file according to file size
-	//log.Println("文件最大大小", fl.MaxSizePerLogFile)
-	if fl.size+int64(len(data)) >= fl.maxSizePerLogFile {
+	// if maxSizePerLogFile is -1, will not rotate file
+	if fl.maxSizePerLogFile != -1 && fl.size+int64(len(data)) >= fl.maxSizePerLogFile {
 		if err := fl.rotate(); err != nil {
 			fl.exit(err)
 		}
@@ -402,7 +403,6 @@ func (fl *FishLogger) exit(err error) {
 	os.Exit(0)
 }
 
-// rotate
 // rotate file
 // if first write data to file，
 //

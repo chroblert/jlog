@@ -3,6 +3,7 @@ package jlog
 import (
 	"os"
 	"strconv"
+	"strings"
 	"time"
 	"unicode"
 )
@@ -55,8 +56,12 @@ type LogConfig struct {
 }
 
 // transform fileSizeStr to int64。support：B,KB,MB,GB
+// if set to -1, will not limit log file size
 // if set illegal value or value size is 0,use default value 500MB
 func transformFilesizeStrToInt64(logFileSizeStr string) int64 {
+	if strings.TrimSpace(logFileSizeStr) == "-1" {
+		return -1
+	}
 	var number int64 = 0
 	var logfileSize int64 = 0
 	for i, c := range logFileSizeStr {

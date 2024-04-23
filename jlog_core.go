@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// log level
+// Str output log level
 func (lv logLevel) Str() string {
 	if lv >= DEBUG && lv <= FATAL {
 		return logShort[lv*3 : lv*3+3]
@@ -74,7 +74,7 @@ func newLogger(logConf LogConfig) *FishLogger {
 	return fl
 }
 
-// create a new instance
+// New create a new instance
 // if not specify LogConfig, use default configuration to create.
 //
 //	write data to log file per 10 second
