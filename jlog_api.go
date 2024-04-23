@@ -117,6 +117,10 @@ func Flush() {
 
 }
 
+func CloseAfterFlush() {
+	fishLogger.CloseAfterFlush()
+}
+
 func NDebug(args ...interface{}) {
 	fishLogger.nprintln(DEBUG, args...)
 }

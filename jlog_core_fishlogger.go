@@ -143,11 +143,18 @@ func (fl *FishLogger) SetLogCount(logCount int) {
 	fl.logCount = logCount
 }
 
-// flush to file
+// Flush flush to file
 func (fl *FishLogger) Flush() {
 	//fl.mu.Lock()
 	//defer fl.mu.Unlock()
 	fl.flushSync()
+}
+
+// CloseAfterFlush Close After flush to file
+func (fl *FishLogger) CloseAfterFlush() {
+	//fl.mu.Lock()
+	//defer fl.mu.Unlock()
+	fl.closeAfterFlushSync()
 }
 
 // set if print log header(caller file and line number)
@@ -392,6 +399,17 @@ func (fl *FishLogger) flushSync() {
 	if fl.file != nil {
 		fl.writer.Flush() // write data to memory
 		fl.file.Sync()    // flush buffer(memory) to disk file
+	}
+}
+
+// close file after flush to file
+func (fl *FishLogger) closeAfterFlushSync() {
+	fl.mu.Lock()
+	defer fl.mu.Unlock()
+	if fl.file != nil {
+		fl.writer.Flush() // write data to memory
+		fl.file.Sync()    // flush buffer(memory) to disk file
+		fl.file.Close()
 	}
 }
 

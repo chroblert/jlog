@@ -37,11 +37,12 @@ func main() {
 	//for i := 0; i < 10; i++ {
 	//	nlog.NErrorf("a")
 	//}
-	defer jlog.Flush()
+	defer jlog.CloseAfterFlush()
+	defer jlog.CloseAfterFlush()
 	jlog.SetLogFullPath("logs/tesxtdll2.log", 0777, 0644)
 	//jlog.NInfo("jlog test")
 	//jlog.Flush()
 	jlog.NInfo(jlog.GetCurrentFileSize())
-
+	jlog.CloseAfterFlush()
 	jlog.NInfo(jlog.GetAllWritedSize())
 }
