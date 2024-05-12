@@ -132,6 +132,11 @@ func NInfo(args ...interface{}) {
 	fishLogger.nprintln(INFO, args...)
 }
 
+// no '\n' by default
+func Write(p []byte) (n int, err error) {
+	return fishLogger.Write(p)
+}
+
 func NInfof(format string, args ...interface{}) {
 	fishLogger.nprintf(INFO, format, args...)
 }

@@ -248,6 +248,17 @@ func (fl *FishLogger) println(lv logLevel, args ...interface{}) {
 	fl.write(lv, buf, true)
 }
 
+// implement io.Writer
+// no '\n' by default
+func (fl *FishLogger) Write(p []byte) (n int, err error) {
+	var buf *buffer
+	buf = &buffer{}
+	//n, err = fmt.Fprintln(buf, p)
+	n, err = buf.Write(p)
+	fl.write(INFO, buf, false)
+	return
+}
+
 // print with \n
 // no log header
 func (fl *FishLogger) nprintln(lv logLevel, args ...interface{}) {
