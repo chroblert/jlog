@@ -45,7 +45,7 @@ func main() {
 	//jlog.Flush()
 	jlog.NInfo(jlog.GetCurrentFileSize())
 	jlog.CloseAfterFlush()
-	writerJlog := jlog.New(jlog.LogConfig{LogFullPath: "logs/test.log", UseConsole: true, StoreToFile: true, InitCreateNewLog: false})
+	writerJlog := jlog.New(jlog.LogConfig{LogFullPath: "logs/test.log", UseConsole: true, StoreToFile: true, InitCreateNewLog: false, Verbose: true})
 	defer writerJlog.CloseAfterFlush()
 	io.WriteString(writerJlog, "111111\n")
 	jlog.NInfo(jlog.GetAllWritedSize())
