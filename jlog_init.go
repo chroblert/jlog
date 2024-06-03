@@ -2,6 +2,7 @@ package jlog
 
 import (
 	"os"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -20,13 +21,15 @@ const (
 )
 
 var (
+	path, _    = os.Executable()
+	_, exec    = filepath.Split(path)
 	fishLogger = newLogger(LogConfig{
 		BufferSize:        2048,
 		FlushInterval:     10 * time.Second,
 		MaxStoreDays:      -1,
 		MaxSizePerLogFile: "500MB", // 500MB
 		LogCount:          -1,
-		LogFullPath:       "logs/app.log",
+		LogFullPath:       "logs/" + exec + "_" + time.Now().Format("20060102T150405") + ".log",
 		LogFilePerm:       0644,
 		LogDirPerm:        0755,
 		Lv:                DEBUG,

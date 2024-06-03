@@ -40,7 +40,7 @@ func main() {
 	//}
 	defer jlog.CloseAfterFlush()
 	defer jlog.CloseAfterFlush()
-	jlog.SetLogFullPath("logs/tesxtdll2.log", 0777, 0644)
+	//jlog.SetLogFullPath("logs/tesxtdll2.log", 0777, 0644)
 	//jlog.NInfo("jlog test")
 	//jlog.Flush()
 	jlog.NInfo(jlog.GetCurrentFileSize())
