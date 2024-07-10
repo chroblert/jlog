@@ -4,62 +4,62 @@ import (
 	"os"
 )
 
-// set if print log header
+// SetVerbose set if print log header
 func SetVerbose(b bool) {
 	fishLogger.setVerbose(b)
 }
 
-// set if displayed in console
+// SetUseConsole set if displayed in console
 func SetUseConsole(b bool) {
 	fishLogger.SetUseConsole(b)
 }
 
-// set log level
+// SetLevel set log level
 func SetLevel(lv logLevel) {
 	fishLogger.SetLogLevel(lv)
 }
 
-// set max store days
+// SetMaxStoreDays set max store days
 // never delete if ma < 0
 func SetMaxStoreDays(ma int) {
 	fishLogger.SetMaxStoreDays(ma)
 }
 
-// set max log file count
+// SetLogCount set max log file count
 // never delete if logCount < 0
 func SetLogCount(logCount int) {
 	fishLogger.SetLogCount(logCount)
 }
 
-// if create new log file when first run
+// IsIniCreateNewLog if create new log file when first run
 func IsIniCreateNewLog(iniCreateNewLog bool) {
 	fishLogger.IsIniCreateNewLog(iniCreateNewLog)
 }
 
-// set log file path. eg: logs/app.log
+// SetLogFullPath set log file path. eg: logs/app.log
 // windows: \,/ as path delimter
 // linux: only / as path delimter [!!]
 func SetLogFullPath(logFullPath string, mode ...os.FileMode) error {
 	return fishLogger.SetLogFullPath(logFullPath, mode...)
 }
 
-// set max log file size
+// SetMaxSizePerLogFile set max log file size
 // eg. 10B,10KB,10MB,10GB. if not set correctly,will use default value 500MB.
 func SetMaxSizePerLogFile(logfileSize string) {
 	fishLogger.SetMaxSizePerLogFile(logfileSize)
 }
 
-// set if save log to log file
+// SetStoreToFile set if save log to log file
 func SetStoreToFile(b bool) {
 	fishLogger.SetStoreToFile(b)
 }
 
-// set if rotate file every day
+// SetRotateEveryday set if rotate file every day
 func SetRotateEveryday(b bool) {
 	fishLogger.SetRotateEveryday(b)
 }
 
-// -------- instance fishLogger
+// Println -------- instance fishLogger
 func Println(args ...interface{}) {
 	fishLogger.nprintln(DEBUG, args...)
 }

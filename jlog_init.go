@@ -41,6 +41,8 @@ var (
 	})
 )
 
+// LogConfig
+// MaxSizePerLogFile max log file size per file,unit:B,KB,MB,GB. default 500MB. -1 will not limit file size
 type LogConfig struct {
 	BufferSize        int
 	FlushInterval     time.Duration // unit:ms。if value is 0，then use default 10s

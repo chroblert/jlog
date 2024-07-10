@@ -48,7 +48,7 @@ type buffer struct {
 // log level
 type logLevel int
 
-// set log level
+// SetLogLevel set log level
 func (fl *FishLogger) SetLogLevel(lv logLevel) {
 	if lv < DEBUG || lv > FATAL {
 		panic("illegal log level")
@@ -58,7 +58,7 @@ func (fl *FishLogger) SetLogLevel(lv logLevel) {
 	fl.level = lv
 }
 
-// set log path. eg: logs/app.log
+// SetLogFullPath set log path. eg: logs/app.log
 // windows: \,/ as delimiter
 // linux: / as delimiter [!!]
 func (fl *FishLogger) SetLogFullPath(logFullPath string, mode ...os.FileMode) error {
@@ -120,14 +120,14 @@ func (fl *FishLogger) SetMaxSizePerLogFile(logFileSizeStr string) {
 	fl.maxSizePerLogFile = transformFilesizeStrToInt64(logFileSizeStr)
 }
 
-// iniCreateNewLog
+// IsIniCreateNewLog iniCreateNewLog
 func (fl *FishLogger) IsIniCreateNewLog(iniCreateNewLog bool) {
 	fl.mu.Lock()
 	defer fl.mu.Unlock()
 	fl.iniCreateNewLog = iniCreateNewLog
 }
 
-// set max store days
+// SetMaxStoreDays set max store days
 // never delete if ma < 0
 func (fl *FishLogger) SetMaxStoreDays(ma int) {
 	fl.mu.Lock()
@@ -135,7 +135,7 @@ func (fl *FishLogger) SetMaxStoreDays(ma int) {
 	fl.maxStoreDays = ma
 }
 
-// set log file count
+// SetLogCount set log file count
 // never delete if logCount < 0
 func (fl *FishLogger) SetLogCount(logCount int) {
 	fl.mu.Lock()
@@ -164,21 +164,21 @@ func (fl *FishLogger) setVerbose(b bool) {
 	fl.verbose = b
 }
 
-// set if displayed in console
+// SetUseConsole set if displayed in console
 func (fl *FishLogger) SetUseConsole(b bool) {
 	fl.mu.Lock()
 	defer fl.mu.Unlock()
 	fl.console = b
 }
 
-// set if save log data to log file
+// SetStoreToFile set if save log data to log file
 func (fl *FishLogger) SetStoreToFile(b bool) {
 	fl.mu.Lock()
 	defer fl.mu.Unlock()
 	fl.storeToFile = b
 }
 
-// set if rotate file every day
+// SetRotateEveryday set if rotate file every day
 func (fl *FishLogger) SetRotateEveryday(b bool) {
 	fl.mu.Lock()
 	defer fl.mu.Unlock()
@@ -263,6 +263,7 @@ func (fl *FishLogger) Write(p []byte) (n int, err error) {
 		// no verbose
 		fl.nprintf(INFO, string(p))
 	}
+	n = len(p)
 	return
 }
 
@@ -535,7 +536,7 @@ func (fl *FishLogger) rotate() error {
 	return nil
 }
 
-// user customer instance
+// GetAllWritedSize user customer instance
 // 获取本次在所有文件中已经写入的大小
 func (fl *FishLogger) GetAllWritedSize() int64 {
 	fl.mu.Lock()
@@ -543,7 +544,7 @@ func (fl *FishLogger) GetAllWritedSize() int64 {
 	return fl.writed_size
 }
 
-// 获取在当前文件中已经写入的大小
+// GetCurrentFileSize 获取在当前文件中已经写入的大小
 func (fl *FishLogger) GetCurrentFileSize() int64 {
 	fl.mu.Lock()
 	defer fl.mu.Unlock()
